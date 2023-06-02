@@ -43,14 +43,18 @@ def start_xourse(resvdev,resvBeginTime,resvEndTime,self):
     ],
     'memo': '',
 }
-    response = requests.post('https://ic.ctbu.edu.cn/ic-web/reserve', cookies=cookies, headers=headers, json=json_data)
-    res_json = response.json()
-    print(str(res_json["message"]))
-    self.insert("end", res_json['message'])
+    while True:
+        response = requests.post('https://ic.ctbu.edu.cn/ic-web/reserve', cookies=cookies, headers=headers, json=json_data)
+        res_json = response.json()
+        print(str(res_json["message"]))
+        self.insert("end", res_json['message'])
+        
 def scan(resvdevs,resvBeginTime,resvEndTime,cookie,self):
     cookies['ic-cookie']=cookie 
     while True:
         for i in resvdevs:
-            start_xourse(i,resvBeginTime,resvEndTime,self) 
+            #启动线程
+            t = Thread(target=start_xourse,args=(i,resvBeginTime,resvEndTime,self))
+            t.start()            
             
    

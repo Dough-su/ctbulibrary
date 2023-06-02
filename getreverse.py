@@ -32,4 +32,9 @@ def send_request(datetime,cookie):
  cookies['ic-cookie']=cookie
  params['resvDates']=datetime
  response = requests.get('https://ic.ctbu.edu.cn/ic-web/reserve', params=params, cookies=cookies, headers=headers)
- return response.json()
+ params['roomIds']='100455856'
+ response2 = requests.get('https://ic.ctbu.edu.cn/ic-web/reserve', params=params, cookies=cookies, headers=headers)
+ response_json=response.json()
+ response2_json=response2.json()
+ response_json['data'].extend(response2_json['data'])
+ return response_json
