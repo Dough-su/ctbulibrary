@@ -206,6 +206,6 @@ class App(tk.Frame):
         t.start()
 
 root = tk.Tk()
-root.title('冰美式不加糖，重庆工商已被nepu占领,身边美女无数:-O')
+root.title(':-O')
 app = App(master=root)
 app.mainloop()
