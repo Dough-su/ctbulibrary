@@ -25,13 +25,13 @@ headers = {
 }
 
 
-def start_xourse(resvdev,resvBeginTime,resvEndTime,self):
+def start_xourse(appAccNo,resvdev,resvBeginTime,resvEndTime,self):
     json_data = {
     'sysKind': 8,#系统类型
-    'appAccNo': 175096,#学号
+    'appAccNo': appAccNo,#学号
     'memberKind': 1,#成员类型
     'resvMember': [#学号
-        175096,
+        appAccNo
     ],
     'resvBeginTime': ''+resvBeginTime+'',
     'resvEndTime': ''+resvEndTime+'',
@@ -49,12 +49,12 @@ def start_xourse(resvdev,resvBeginTime,resvEndTime,self):
         print(str(res_json["message"]))
         self.insert("end", res_json['message'])
         
-def scan(resvdevs,resvBeginTime,resvEndTime,cookie,self):
+def scan(appAccNo,resvdevs,resvBeginTime,resvEndTime,cookie,self):
     cookies['ic-cookie']=cookie 
     while True:
         for i in resvdevs:
             #启动线程
-            t = Thread(target=start_xourse,args=(i,resvBeginTime,resvEndTime,self))
+            t = Thread(target=start_xourse,args=(appAccNo,i,resvBeginTime,resvEndTime,self))
             t.start()            
             
    
