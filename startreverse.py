@@ -1,9 +1,12 @@
+from concurrent.futures import ThreadPoolExecutor ,as_completed
+import threading
 import requests
-import re
-import time
-from threading import Thread
+from loguru import logger
+exit_thread = threading.Event()
+from tkinter import messagebox
+
 cookies = {
-    'ic-cookie': 'c07f63df-6606-4f98-9d87-b6436d1b232f',
+    'ic-cookie': '',
 }
 
 headers = {
@@ -25,9 +28,9 @@ headers = {
 }
 
 
-def start_xourse(appAccNo,resvdev,resvBeginTime,resvEndTime,self):
+def start_xourse(syskind,appAccNo,resvdev,resvBeginTime,resvEndTime,self):
     json_data = {
-    'sysKind': 8,#系统类型
+    'sysKind': syskind,#系统类型
     'appAccNo': appAccNo,#学号
     'memberKind': 1,#成员类型
     'resvMember': [#学号
@@ -37,7 +40,7 @@ def start_xourse(appAccNo,resvdev,resvBeginTime,resvEndTime,self):
     'resvEndTime': ''+resvEndTime+'',
     'testName': '',
     'captcha': '',
-    'resvProperty': 0,
+    'resvProperty': 0,  
     'resvDev': [
         resvdev,
     ],
@@ -46,15 +49,23 @@ def start_xourse(appAccNo,resvdev,resvBeginTime,resvEndTime,self):
     while True:
         response = requests.post('https://ic.ctbu.edu.cn/ic-web/reserve', cookies=cookies, headers=headers, json=json_data)
         res_json = response.json()
-        print(str(res_json["message"]))
+        logger.info(res_json['message'])
+        if(res_json['message']=="新增成功"):
+           messagebox.showinfo("Success", "预定“"+resvdev+"”成功")
+           exit_thread.set()
+           return
         self.insert("end", res_json['message'])
         
-def scan(appAccNo,resvdevs,resvBeginTime,resvEndTime,cookie,self):
+def scan(syskind,appAccNo,resvdevs,resvBeginTime,resvEndTime,cookie,self):
     cookies['ic-cookie']=cookie 
-    while True:
-        for i in resvdevs:
-            #启动线程
-            t = Thread(target=start_xourse,args=(appAccNo,i,resvBeginTime,resvEndTime,self))
-            t.start()            
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        futures = {executor.submit(start_xourse, syskind, appAccNo, i, resvBeginTime, resvEndTime, self): i for i in resvdevs}
+        for future in as_completed(futures):
+            if exit_thread.is_set():
+                executor.shutdown(wait=False)
+                break
+            try:
+                self.insert("end", future.result())
+            except Exception as e:
+                logger.error(e)       
             
-   

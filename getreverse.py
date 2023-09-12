@@ -1,7 +1,7 @@
 import requests
 
 cookies = {
-    'ic-cookie': 'cacf6e9e-f325-423b-8839-f8d21c3c3117',
+    'ic-cookie': '',
 }
 
 headers = {
@@ -28,7 +28,6 @@ params = {
     'sysKind': '8',
 }
 def send_request(datetime,cookie):
- print('开始获取')
  cookies['ic-cookie']=cookie
  params['resvDates']=datetime
  response = requests.get('https://ic.ctbu.edu.cn/ic-web/reserve', params=params, cookies=cookies, headers=headers)

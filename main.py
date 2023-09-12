@@ -172,10 +172,8 @@ class App(tk.Frame):
             self.end_minute_combobox,
             self.end_second_combobox
         ])
-        print(selected_start_date.replace(" ", "").replace("-", "")[:8])
 
         res_json = send_request(selected_start_date.replace(" ", "").replace("-", "")[:8],self.cookie_entry.get())
-        print(res_json)
         if(res_json["message"]=="用户未登录，请重新登录"):
             self.devname_listbox.insert("end", "用户未登录，请重新登录")
 
@@ -206,8 +204,10 @@ class App(tk.Frame):
             self.end_minute_combobox,
             self.end_second_combobox
         ])
-        appAccNo = getaccno(selected_start_date.replace(" ", "")[:10],selected_end_date.replace(" ", "")[:10],self.cookie_entry.get())
-        t = Thread(target=scan, args=(appAccNo,selected_devId, selected_start_date, selected_end_date, self.cookie_entry.get(), self.result_listbox))
+        stu_info=getaccno(selected_start_date.replace(" ", "")[:10],selected_end_date.replace(" ", "")[:10],self.cookie_entry.get())['data'][0]
+        appAccNo = stu_info['appAccNo']
+        syskind = 8
+        t = Thread(target=scan, args=(syskind,appAccNo,selected_devId, selected_start_date, selected_end_date, self.cookie_entry.get(), self.result_listbox))
         t.start()
 
 root = tk.Tk()

@@ -35,4 +35,4 @@ def getaccno(startdate,enddate,cookie):
     params['resvEndTime']=enddate
     response = requests.get('https://ic.ctbu.edu.cn/ic-web/psgSeat/resvInfo', params=params, cookies=cookies, headers=headers)
     response_json=response.json()
-    return response_json['data'][0]['appAccNo']
+    return response_json
