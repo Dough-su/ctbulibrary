@@ -1,6 +1,8 @@
 
 dist/
 build/
-__pycache__/
+__pycache__
 *.pyc
 *.spec
+.DS_Store
+
